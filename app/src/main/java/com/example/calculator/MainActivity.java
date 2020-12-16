@@ -7,18 +7,25 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity {
 
     Button b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, plus, minus, multi, div, equal;
     TextView t1;
     String s="";
+    char symbol=0;
+    String num1="", num2="";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        calculator();
     }
     void calculator()
     {
@@ -38,7 +45,6 @@ public class MainActivity extends AppCompatActivity {
         div=findViewById(R.id.div);
         equal=findViewById(R.id.equal);
         t1=findViewById(R.id.t1);
-
         b0.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -144,7 +150,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         s = t1.getText().toString();
-                        s+="+";
+                        if (symbol != 0) {
+                            num2=s;
+                            s=calculate(num1, num2, symbol);
+                            symbol=0;
+                        }
+                        else
+                        {
+                            symbol='+';
+                            num1=s;
+                            s="";
+                        }
                         t1.setText(s);
                     }
                 }
@@ -154,7 +170,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         s = t1.getText().toString();
-                        s+="-";
+                        if (symbol != 0) {
+                            num2=s;
+                            s=calculate(num1, num2, symbol);
+                            symbol=0;
+                        }
+                        else
+                        {
+                            num1=s;
+                            s="";
+                            symbol='-';
+                        }
                         t1.setText(s);
                     }
                 }
@@ -164,7 +190,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         s = t1.getText().toString();
-                        s+="*";
+                        if (symbol != 0) {
+                            num2=s;
+                            s=calculate(num1, num2, symbol);
+                            symbol=0;
+                        }
+                        else
+                        {
+                            num1=s;
+                            s="";
+                            symbol='*';
+                        }
                         t1.setText(s);
                     }
                 }
@@ -174,7 +210,17 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         s = t1.getText().toString();
-                        s+="/";
+                        if (symbol != 0) {
+                            num2=s;
+                            s=calculate(num1, num2, symbol);
+                            symbol=0;
+                        }
+                        else
+                        {
+                            num1=s;
+                            symbol='/';
+                            s="";
+                        }
                         t1.setText(s);
                     }
                 }
@@ -184,59 +230,47 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(View v) {
                         s = t1.getText().toString();
-                        s=calculate(s);//524+238-121
+                        if (symbol != 0) {
+                            num2 = s;
+                            s = calculate(num1, num2, symbol);
+                            symbol = 0;
+                        }
                         t1.setText(s);
+                        Timer timer = new Timer();
+                        timer.schedule(
+                                new TimerTask() {
+                                    @Override
+                                    public void run() {
+                                        t1.setText("");
+                                        num1="";
+                                        num2="";
+                                        symbol=0;
+                                    }
+                                }
+                       ,10000 );
+                        //t1.setText("");
                     }
                 }
         );
     }
-    String calculate(String s)
+    String calculate(String num1, String num2, char symbol)
     {
-        String num[]=s.split("[+*/-//]");
-        String op[]=s.split("[0-9]");
-        List<String> l1= Arrays.asList(num);
-        List<String> l2=Arrays.asList(op);
-        long ans=0;
-        for(int i=0;i<op.length;i++) {//[123+25/5-1]=[127+127/5-1]
-            if(l2.get(i).equals("/"))
-            {
-                double n=(Double.parseDouble(l1.get(i))/Double.parseDouble(l1.get(i+1)));
-                l1.remove(i);
-                l1.remove(i+1);
-                l2.remove(i);
-                l1.set(i, n+"");
-            }
-        }
-        for(int i=0;i<op.length;i++) {//[123+25/5-1]=[127+127/5-1]
-            if(l2.get(i).equals("*"))
-            {
-                double n=(Double.parseDouble(l1.get(i))*Double.parseDouble(l1.get(i+1)));
-                l1.remove(i);
-                l1.remove(i+1);
-                l2.remove(i);
-                l1.set(i, n+"");
-            }
-        }
-        for(int i=0;i<op.length;i++) {//[123+25/5-1]=[127+127/5-1]
-            if(l2.get(i).equals("+"))
-            {
-                double n=(Double.parseDouble(l1.get(i))+Double.parseDouble(l1.get(i+1)));
-                l1.remove(i);
-                l1.remove(i+1);
-                l2.remove(i);
-                l1.set(i, n+"");
-            }
-        }
-        for(int i=0;i<op.length;i++) {//[123+25/5-1]=[127+127/5-1]
-            if(l2.get(i).equals("-"))
-            {
-                double n=(Double.parseDouble(l1.get(i))-Double.parseDouble(l1.get(i+1)));
-                l1.remove(i);
-                l1.remove(i+1);
-                l2.remove(i);
-                l1.set(i, n+"");
-            }
-        }
-        return "";
+       String s="";
+       switch(symbol){
+           case '+':
+               s=(Double.parseDouble(num1)+Double.parseDouble(num2))+"";
+               break;
+           case '-':
+               s=(Double.parseDouble(num1)-Double.parseDouble(num2))+"";
+               break;
+           case '*':
+               s=(Double.parseDouble(num1)*Double.parseDouble(num2))+"";
+               break;
+           case '/':
+               s=(Double.parseDouble(num1)/Double.parseDouble(num2))+"";
+               break;
+       }
+
+        return s;
     }
 }
