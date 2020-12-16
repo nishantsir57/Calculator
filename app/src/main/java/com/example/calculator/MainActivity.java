@@ -190,6 +190,26 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+        decimal.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        s = t1.getText().toString();
+                        s+="/";
+                        t1.setText(s);
+                    }
+                }
+        );
+        pi.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        s = t1.getText().toString();
+                        s+="/";
+                        t1.setText(s);
+                    }
+                }
+        );
     }
     String calculate(String s)
     {
